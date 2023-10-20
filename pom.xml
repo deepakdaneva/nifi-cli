@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.deepakdaneva.nifi</groupId>
   <artifactId>nifi-cli</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>nifi-cli</name>
   <description>It's a Quarkus CLI application developed by utilizing Apache NiFi REST APIs, all from the command line. Simplify your workflow and boost productivity with this CLI-based tool.</description>
   <url>https://github.com/deepakdaneva/nifi-cli</url>
