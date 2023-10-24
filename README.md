@@ -1,5 +1,8 @@
 # [nifi-cli](https://github.com/deepakdaneva/nifi-cli)
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.deepakdaneva.nifi/nifi-cli/badge.svg?gav=true)](https://maven-badges.herokuapp.com/maven-central/io.github.deepakdaneva.nifi/nifi-cli/?gav=true)
+[![Java Docs](https://javadoc.io/badge/io.github.deepakdaneva.nifi/nifi-cli/latest.svg)](https://javadoc.io/doc/io.github.deepakdaneva.nifi/nifi-cli/latest/index.html)
+
 It's a CLI application developed using [Quarkus](https://quarkus.io) with [Picocli](https://picocli.info) and utilizing Apache NiFi REST APIs internally, all from the command line. Simplify your workflow and boost productivity with this CLI-based tool.
 
 ## Table of Contents
