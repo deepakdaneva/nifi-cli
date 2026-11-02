@@ -10,6 +10,10 @@ updates:
     commit-message:
       prefix: build
       include: scope
+    ignore:
+      # Maven 3.10 breaks authenticated uploads to the Central snapshot repository; stay on 3.9.x
+      - dependency-name: "org.apache.maven:apache-maven"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
     groups:
       maven-plugins:
         patterns: ["org.apache.maven.plugins:*", "*-maven-plugin"]
