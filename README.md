@@ -163,7 +163,7 @@ alphanumeric characters replaced by `_`, e.g. `IO_GITHUB_DEEPAKDANEVA_NIFI_CLI_S
 | Property | Default | Description |
 |---|---|---|
 | `io.github.deepakdaneva.nifi.cli.stop-at-unmatched` | `false` | Stop option parsing at the first unmatched argument; the remaining arguments are treated as unmatched. |
-| `io.github.deepakdaneva.nifi.cli.unmatched-arguments-allowed` | `true` | Ignore unknown arguments instead of failing with a usage error. Set to `false` for strict parsing. |
+| `io.github.deepakdaneva.nifi.cli.unmatched-arguments-allowed` | `false` | Unknown or mistyped options fail with a usage error (exit code 2). Set to `true` to ignore them instead. |
 | `quarkus.log.category."io.github.deepakdaneva".level` | `INFO` | Log level of the CLI's own messages; `DEBUG` also prints stack traces of failures. |
 | `quarkus.log.level` | `OFF` | Log level of the frameworks used by the CLI. |
 | `quarkus.rest-client.http2` | `true` | Use HTTP/2 when NiFi supports it. |

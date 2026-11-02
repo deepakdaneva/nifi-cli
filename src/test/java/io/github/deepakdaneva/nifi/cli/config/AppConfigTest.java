@@ -37,14 +37,14 @@ class AppConfigTest {
     void appliesDefaults() {
         AppConfig config = load(Map.of());
         assertFalse(config.cli().stopAtUnmatched());
-        assertTrue(config.cli().unmatchedArgumentsAllowed());
+        assertFalse(config.cli().unmatchedArgumentsAllowed());
     }
 
     @Test
     void readsDocumentedPropertyNames() {
-        AppConfig config = load(Map.of("io.github.deepakdaneva.nifi.cli.stop-at-unmatched", "true", "io.github.deepakdaneva.nifi.cli.unmatched-arguments-allowed", "false"));
+        AppConfig config = load(Map.of("io.github.deepakdaneva.nifi.cli.stop-at-unmatched", "true", "io.github.deepakdaneva.nifi.cli.unmatched-arguments-allowed", "true"));
         assertTrue(config.cli().stopAtUnmatched());
-        assertFalse(config.cli().unmatchedArgumentsAllowed());
+        assertTrue(config.cli().unmatchedArgumentsAllowed());
     }
 
     @Test
@@ -54,7 +54,7 @@ class AppConfigTest {
         SmallRyeConfig config = new SmallRyeConfigBuilder().withMapping(AppConfig.class).withSources(new PropertiesConfigSource(url)).build();
         AppConfig appConfig = config.getConfigMapping(AppConfig.class);
         assertFalse(appConfig.cli().stopAtUnmatched());
-        assertTrue(appConfig.cli().unmatchedArgumentsAllowed());
+        assertFalse(appConfig.cli().unmatchedArgumentsAllowed());
     }
 
     @Test

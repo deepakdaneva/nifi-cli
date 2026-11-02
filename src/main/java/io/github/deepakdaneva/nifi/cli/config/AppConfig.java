@@ -47,9 +47,9 @@ public interface AppConfig {
         /**
          * Whether unmatched arguments are tolerated instead of failing the command ({@code io.github.deepakdaneva.nifi.cli.unmatched-arguments-allowed}).
          *
-         * @return configured value, default is {@code true}
+         * @return configured value, default is {@code false}
          */
-        @WithDefault("true")
+        @WithDefault("false")
         boolean unmatchedArgumentsAllowed();
     }
 }

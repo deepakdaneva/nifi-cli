@@ -140,6 +140,12 @@ class NiFiCliMainTest {
     }
 
     @Test
+    void unknownOptionIsUsageError(QuarkusMainLauncher launcher) {
+        assertEquals(2, launcher.launch(args("align", "--colums", "3")).exitCode());
+        assertTrue(nifi.requests().isEmpty(), "must not contact NiFi");
+    }
+
+    @Test
     void invalidColumnsIsUsageError(QuarkusMainLauncher launcher) {
         assertEquals(2, launcher.launch(args("align", "-c", "0")).exitCode());
         assertEquals(2, launcher.launch(args("align", "-c", "x")).exitCode());
