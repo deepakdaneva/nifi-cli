@@ -10,32 +10,37 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package io.github.deepakdaneva.nifi.cli.configs;
+package io.github.deepakdaneva.nifi.cli.config;
 
-import io.github.deepakdaneva.nifi.cli.configs.deserializers.NiFiDateTimeDeserializer;
+import io.github.deepakdaneva.nifi.cli.config.json.NiFiDateTimeDeserializer;
 import io.quarkus.jsonb.JsonbConfigCustomizer;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.json.bind.JsonbConfig;
 
 /**
+ * Registers NiFi specific JSON-B customizations with the JSON-B instance used by the REST client.
+ *
  * @author Deepak Kumar Jangir
- * @version 1
+ * @version 2
  * @since 1
  */
 @Singleton
 public class AppJsonbConfigCustomizer implements JsonbConfigCustomizer {
 
-    /**
-     * NiFi specific date time deserializer
-     */
     @Inject
     NiFiDateTimeDeserializer niFiDateTimeDeserializer;
 
     /**
-     * Customizes the behaviour of deserialization
-     * 
-     * @param jsonbConfig to configure
+     * Creates the customizer; dependencies are injected by CDI.
+     */
+    public AppJsonbConfigCustomizer() {
+    }
+
+    /**
+     * Adds the NiFi date/time deserializer to the given configuration.
+     *
+     * @param jsonbConfig configuration to customize
      */
     @Override
     public void customize(JsonbConfig jsonbConfig) {

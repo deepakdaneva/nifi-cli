@@ -12,35 +12,33 @@
  */
 package io.github.deepakdaneva.nifi.cli.exceptions;
 
-import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 
 /**
+ * Signals that the NiFi REST API answered a request with an HTTP error status.
+ *
  * @author Deepak Kumar Jangir
- * @version 1
+ * @version 2
  * @since 1
  */
 @Getter
 public class NiFiResponseException extends RuntimeException {
-    /**
-     * Status code
-     */
-    final int status;
-    /**
-     * Response received from NiFi REST API call
-     */
-    final Response response;
+
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Create instance with the provided message, status and response received from NiFi
-     * 
-     * @param message of the exception
-     * @param status code of the response
-     * @param response received from NiFi
+     * HTTP status code returned by NiFi.
      */
-    public NiFiResponseException(String message, int status, Response response) {
+    private final int status;
+
+    /**
+     * Creates an exception for an HTTP error response.
+     *
+     * @param message description of the failure, usually the response body sent by NiFi
+     * @param status HTTP status code of the response
+     */
+    public NiFiResponseException(String message, int status) {
         super(message);
         this.status = status;
-        this.response = response;
     }
 }
