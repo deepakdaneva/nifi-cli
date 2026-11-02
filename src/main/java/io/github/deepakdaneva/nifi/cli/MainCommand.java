@@ -12,162 +12,149 @@
  */
 package io.github.deepakdaneva.nifi.cli;
 
-import io.github.deepakdaneva.nifi.cli.configs.AppRestClientConfig;
-import io.github.deepakdaneva.nifi.cli.exceptions.NiFiResponseException;
+import io.github.deepakdaneva.nifi.cli.client.ConnectionSettings;
+import io.github.deepakdaneva.nifi.cli.commands.AlignProcessGroups;
+import io.github.deepakdaneva.nifi.cli.commands.ExitCodes;
+import io.github.deepakdaneva.nifi.cli.commands.VersionProvider;
 import io.github.deepakdaneva.nifi.cli.utils.AppUtils;
-import io.github.deepakdaneva.nifi.cli.services.NiFiService;
-import io.github.deepakdaneva.nifi.cli.subcmds.AlignProcessGroups;
-import io.quarkus.logging.Log;
 import io.quarkus.picocli.runtime.annotations.TopCommand;
-import io.quarkus.runtime.ShutdownEvent;
-import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import picocli.CommandLine;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.ParameterException;
-import picocli.CommandLine.ParseResult;
 import picocli.CommandLine.Spec;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 
 /**
+ * Top level {@code nifi-cli} command. Holds the connection options shared by all subcommands.
+ * <p>
+ * Authentication and logout around the selected subcommand are handled by {@link io.github.deepakdaneva.nifi.cli.commands.CliExecutionStrategy}.
+ *
  * @author Deepak Kumar Jangir
- * @version 1
+ * @version 2
  * @since 1
  */
 @TopCommand
-@CommandLine.Command(name = "nifi-cli", version = "1.0.0", mixinStandardHelpOptions = true, subcommands = {AlignProcessGroups.class})
+@CommandLine.Command(name = "nifi-cli", mixinStandardHelpOptions = true, versionProvider = VersionProvider.class, subcommands = {AlignProcessGroups.class, CommandLine.HelpCommand.class}, exitCodeListHeading = "%nExit Codes:%n", exitCodeList = {ExitCodes.LIST_OK, ExitCodes.LIST_SOFTWARE, ExitCodes.LIST_USAGE, ExitCodes.LIST_AUTHENTICATION})
 public class MainCommand implements Runnable {
 
-    /**
-     * Command Spec
-     */
     @Spec
     CommandSpec spec;
 
-    /**
-     * NiFi Base URL
-     */
     URI location;
-    /**
-     * NiFi Username
-     */
+
     @CommandLine.Option(names = {Options.U, Options.USERNAME}, required = true, description = "Username of the user.")
     String username;
-    /**
-     * NiFi Password
-     */
-    @CommandLine.Option(names = {Options.P, Options.PASSWORD}, required = true, description = "Password of the user.")
+
+    @CommandLine.Option(names = {Options.P, Options.PASSWORD}, required = true, interactive = true, arity = "0..1", description = "Password of the user. Specify the option without a value to be prompted for it.")
     String password;
-    /**
-     * NiFi Service
-     */
-    @Inject
-    @RestClient
-    NiFiService nifiService;
+
+    @CommandLine.Option(names = {Options.K, Options.INSECURE}, description = "Disable TLS certificate and host name verification. INSECURE: only for testing against servers with self-signed certificates.")
+    boolean insecure;
+
+    @CommandLine.Option(names = {Options.TRUSTSTORE}, paramLabel = "<file>", description = "Trust store (PKCS12 or JKS) used to verify the NiFi server certificate. Defaults to the JVM trusted CAs.")
+    Path trustStore;
+
+    @CommandLine.Option(names = {Options.TRUSTSTORE_PASSWORD}, interactive = true, arity = "0..1", paramLabel = "<password>", description = "Password of the trust store. Specify the option without a value to be prompted for it.")
+    String trustStorePassword;
 
     /**
-     * Generates the URI using the provided {@code location} string
-     * 
-     * @return Base NiFi REST APIs URI
+     * Creates the command; picocli populates the options.
+     */
+    public MainCommand() {
+    }
+
+    /**
+     * Returns the validated NiFi base URL.
+     *
+     * @return base NiFi URL ({@code scheme://host[:port]})
      */
     public URI getLocation() {
-        try {
-            return new URI(location.toString());
-        } catch (URISyntaxException e) {
-            return null;
-        }
+        return location;
     }
 
     /**
-     * Set the ${@link MainCommand#location} by using the provided location string by the user.
-     * 
-     * @param value string location
-     * @throws Exception if location is not of a valid pattern
+     * Validates and sets the NiFi base URL.
+     *
+     * @param value location given by the user
+     * @throws ParameterException if the value is not a valid http(s) URL
      */
     @CommandLine.Option(names = {Options.L, Options.LOCATION}, required = true, description = "NiFi base url. (i.e. https://somehost.com:8443)")
-    void setLocation(String value) throws Exception {
-        location = AppUtils.getURI(value, true);
-        if (location == null) {
-            throw new ParameterException(spec.commandLine(), "Invalid NiFi URL (" + value + ") provided.");
+    void setLocation(String value) {
+        try {
+            location = AppUtils.getURI(value, false);
+        } catch (URISyntaxException e) {
+            throw new ParameterException(spec.commandLine(), "Invalid NiFi URL (" + value + ") provided: " + e.getReason() + ".");
         }
     }
 
     /**
-     * Actual command logic to execute
+     * Returns the connection settings collected from the options.
+     *
+     * @return connection settings
+     */
+    public ConnectionSettings connectionSettings() {
+        return new ConnectionSettings(location, username, password == null ? "" : password, insecure, trustStore, trustStorePassword);
+    }
+
+    /**
+     * Only reached when no subcommand was given.
+     *
+     * @throws ParameterException always, to print the usage help
      */
     @Override
     public void run() {
-        ParseResult subCmd = spec.commandLine().getParseResult().subcommand();
-        if (subCmd != null) {
-            try {
-                Log.info("Authenticating...");
-                AppRestClientConfig.accessToken = nifiService.getAccessToken(username, password);
-                Log.info("Authenticated!");
-            } catch (Exception e) {
-                Log.error(e.getMessage());
-                System.exit(CommandLine.ExitCode.SOFTWARE);
-            }
-        } else {
-            throw new CommandLine.ParameterException(spec.commandLine(), "No Command provided to Execute!");
-        }
+        throw new ParameterException(spec.commandLine(), "No Command provided to Execute!");
     }
 
     /**
-     * This method will be invoked by Quarkus when application shuts down.
-     *
-     * @param se shutdown event to execute logic when application shuts down
-     */
-    public void onShutdown(@Observes ShutdownEvent se) {
-        try {
-            if (AppRestClientConfig.accessToken != null) {
-                try {
-                    nifiService.logout();
-                } catch (NiFiResponseException e) {
-                    if (se.isStandardShutdown()) {
-                        Log.warn("Unable to logout: " + e.getMessage());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (se.isStandardShutdown()) {
-                Log.warn("Unable to logout: " + e.getMessage());
-                Log.debug(e.getMessage());
-            }
-        } finally {
-            AppRestClientConfig.accessToken = null;
-        }
-    }
-
-    /**
-     * Options for {@link io.github.deepakdaneva.nifi.cli.MainCommand}
+     * Option names of {@link MainCommand}.
      */
     public static final class Options {
         /**
-         * Base NiFi URL
+         * Base NiFi URL (short form).
          */
         public static final String L = "-l";
         /**
-         * Base NiFi URL
+         * Base NiFi URL.
          */
         public static final String LOCATION = "--location";
         /**
-         * NiFi username
+         * NiFi username (short form).
          */
         public static final String U = "-u";
         /**
-         * NiFi username
+         * NiFi username.
          */
         public static final String USERNAME = "--username";
         /**
-         * NiFi password
+         * NiFi password (short form).
          */
         public static final String P = "-p";
         /**
-         * NiFi password
+         * NiFi password.
          */
         public static final String PASSWORD = "--password";
+        /**
+         * Disable TLS verification (short form).
+         */
+        public static final String K = "-k";
+        /**
+         * Disable TLS verification.
+         */
+        public static final String INSECURE = "--insecure";
+        /**
+         * Trust store file.
+         */
+        public static final String TRUSTSTORE = "--truststore";
+        /**
+         * Trust store password.
+         */
+        public static final String TRUSTSTORE_PASSWORD = "--truststore-password";
+
+        private Options() {
+        }
     }
 }

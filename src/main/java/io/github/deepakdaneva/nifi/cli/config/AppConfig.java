@@ -10,44 +10,46 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package io.github.deepakdaneva.nifi.cli.configs.props;
+package io.github.deepakdaneva.nifi.cli.config;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 
 /**
+ * Application specific configuration, mapped from properties with the prefix {@code io.github.deepakdaneva.nifi}.
+ *
  * @author Deepak Kumar Jangir
- * @version 1
+ * @version 2
  * @since 1
  */
 @ConfigMapping(prefix = "io.github.deepakdaneva.nifi")
 public interface AppConfig {
 
     /**
-     * CLI relation configurations
-     * 
-     * @return provided cli related properties pojo instance
+     * Command line parsing configuration ({@code io.github.deepakdaneva.nifi.cli.*}).
+     *
+     * @return command line parsing configuration
      */
     Cli cli();
 
     /**
-     * CLI relation configurations
+     * Command line parsing configuration.
      */
     interface Cli {
         /**
-         * Property whether to fail the CLI execution if an unmatched option is provided
-         * 
-         * @return boolean value set for this property, default is {@code false}
+         * Whether option parsing stops at the first unmatched argument ({@code io.github.deepakdaneva.nifi.cli.stop-at-unmatched}).
+         *
+         * @return configured value, default is {@code false}
          */
         @WithDefault("false")
         boolean stopAtUnmatched();
 
         /**
-         * Property whether unmatched arguments are allowed or not
-         * 
-         * @return boolean value set for this property, default is {@code true}
+         * Whether unmatched arguments are tolerated instead of failing the command ({@code io.github.deepakdaneva.nifi.cli.unmatched-arguments-allowed}).
+         *
+         * @return configured value, default is {@code false}
          */
-        @WithDefault("true")
+        @WithDefault("false")
         boolean unmatchedArgumentsAllowed();
     }
 }
