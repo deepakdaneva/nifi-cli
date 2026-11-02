@@ -14,28 +14,49 @@ package io.github.deepakdaneva.nifi.cli.utils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 
 /**
+ * General purpose helper methods used by the CLI.
+ *
  * @author Deepak Kumar Jangir
- * @version 1
+ * @version 2
  * @since 1
  */
-public class AppUtils {
+public final class AppUtils {
+
+    private AppUtils() {
+    }
 
     /**
-     * This method parses the URI string and returns null if any exception is raised and ignoreException is true.
-     * 
+     * Parses a NiFi base URL and reduces it to {@code scheme://[userinfo@]host[:port]}.
+     * <p>
+     * Only {@code http} and {@code https} URLs with a host are accepted. Any path, query or fragment is discarded because the CLI always addresses
+     * {@code /nifi-api} at the root of the given host.
+     *
      * @param uriString to parse into URI instance.
-     * @param ignoreException whether to ignore throwing exception or not.
-     * @return URI instance of the provided URI string.
-     * @throws URISyntaxException if string is syntactically invalid
+     * @param ignoreException if {@code true}, {@code null} is returned instead of throwing for an invalid value.
+     * @return URI instance of the provided URI string, or {@code null} if it is invalid and {@code ignoreException} is {@code true}.
+     * @throws URISyntaxException if the value is not a valid http(s) URL and {@code ignoreException} is {@code false}
      */
     public static URI getURI(String uriString, boolean ignoreException) throws URISyntaxException {
         try {
-            URI uri = new URI(uriString);
-            return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), null, null, null);
-        } catch (Exception e) {
-            if (!ignoreException) throw e;
+            if (uriString == null || uriString.isBlank()) {
+                throw new URISyntaxException(String.valueOf(uriString), "URL must not be empty");
+            }
+            URI uri = new URI(uriString.trim());
+            String scheme = uri.getScheme() == null ? null : uri.getScheme().toLowerCase(Locale.ROOT);
+            if (!"http".equals(scheme) && !"https".equals(scheme)) {
+                throw new URISyntaxException(uriString, "URL scheme must be http or https");
+            }
+            if (uri.getHost() == null || uri.getHost().isEmpty()) {
+                throw new URISyntaxException(uriString, "URL must contain a host");
+            }
+            return new URI(scheme, uri.getUserInfo(), uri.getHost(), uri.getPort(), null, null, null);
+        } catch (URISyntaxException e) {
+            if (!ignoreException) {
+                throw e;
+            }
         }
         return null;
     }
