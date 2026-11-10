@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file. The format foll
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 Entries from the next release onwards are generated from Conventional Commits.
 
+## [2.0.1](https://github.com/deepakdaneva/nifi-cli/compare/v2.0.0...v2.0.1) (2026-11-10)
+
+
+### Documentation
+
+* add README badges ([#12](https://github.com/deepakdaneva/nifi-cli/issues/12)) ([20dcc0e](https://github.com/deepakdaneva/nifi-cli/commit/20dcc0e6940324838eb2768aa0289273de94b22b))
+
+
+### Build and Dependencies
+
+* **deps:** bump the maven-minor-and-patch group with 2 updates ([#11](https://github.com/deepakdaneva/nifi-cli/issues/11)) ([8a2d15f](https://github.com/deepakdaneva/nifi-cli/commit/8a2d15f3da48034e657f8933ee2d5ce74f10d58e))
+
 ## [2.0.0](https://github.com/deepakdaneva/nifi-cli/compare/v1.0.0...v2.0.0) (2026-11-02)
 
 
