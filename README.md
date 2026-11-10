@@ -1,7 +1,13 @@
 # nifi-cli
 
 [![CI](https://github.com/deepakdaneva/nifi-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/deepakdaneva/nifi-cli/actions/workflows/ci.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.deepakdaneva.nifi/nifi-cli)](https://central.sonatype.com/artifact/io.github.deepakdaneva.nifi/nifi-cli)
+[![CodeQL](https://github.com/deepakdaneva/nifi-cli/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/deepakdaneva/nifi-cli/actions/workflows/github-code-scanning/codeql)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.deepakdaneva.nifi/nifi-cli?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.deepakdaneva.nifi/nifi-cli)
+[![javadoc](https://javadoc.io/badge2/io.github.deepakdaneva.nifi/nifi-cli/javadoc.svg)](https://javadoc.io/doc/io.github.deepakdaneva.nifi/nifi-cli)
+[![GitHub release](https://img.shields.io/github/v/release/deepakdaneva/nifi-cli)](https://github.com/deepakdaneva/nifi-cli/releases/latest)
+[![Java](https://img.shields.io/badge/Java-21%2B-orange)](#requirements)
+[![Apache NiFi](https://img.shields.io/badge/Apache%20NiFi-2.x-728e9b)](https://nifi.apache.org)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-fe5196)](https://conventionalcommits.org)
 [![License](https://img.shields.io/github/license/deepakdaneva/nifi-cli)](LICENSE)
 
 `nifi-cli` is a command line tool for [Apache NiFi](https://nifi.apache.org). It talks to the NiFi REST API so that
