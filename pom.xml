@@ -57,7 +57,7 @@
     <!-- Framework and library versions -->
     <quarkus.platform.groupid>io.quarkus.platform</quarkus.platform.groupid>
     <quarkus.platform.artifactid>quarkus-bom</quarkus.platform.artifactid>
-    <quarkus.platform.version>3.40.1.1</quarkus.platform.version>
+    <quarkus.platform.version>3.40.1.2</quarkus.platform.version>
     <nifi.version>2.12.0</nifi.version>
     <lombok.version>1.18.48</lombok.version>
     <guava.version>33.8.0-jre</guava.version>
